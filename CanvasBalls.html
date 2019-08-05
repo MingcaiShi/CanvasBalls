@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0
+        }
+
+        #myCanvas {
+            margin: 0 auto;
+            display: block;
+            border: 1px solid rebeccapurple;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="600" height="600"></canvas>
+</body>
+<script>
+    var canvas = document.querySelector("#myCanvas");
+    var ctx = canvas.getContext("2d"); //拿到绘制上下文，拿到往画布上画东西的那支笔
+
+    //拿到画布的宽高
+    var canvasH = canvas.clientHeight;
+    var canvasW = canvas.clientWidth;
+
+    function myRandom(max, min) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    };
+    function getRandomColor() {
+        return "rgba(" + Math.round(Math.random() * 155 + 100) + "," + Math.round(Math.random() * 155 + 100) + "," + Math.round(Math.random() * 155 + 100) + ",1)"
+    }
+
+    var ball = [];
+    //定义构造函数
+    function Ball(ctx) {
+        this.ctx = ctx;
+        this.x = myRandom(canvasW - 30, 0);
+        this.y = myRandom(canvasH - 30, 0);
+        this.speedX = myRandom(5, 1);
+        this.speedY = myRandom(10, 6);
+        this.color = getRandomColor();
+
+        this.init();
+    };
+    //初始化
+    Ball.prototype.init = function () {
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = this.color;
+        this.ctx.arc(this.x, this.y, 30, 0, 2 * Math.PI, false);
+        this.ctx.stroke();
+    }
+    //移动
+    Ball.prototype.move = function () {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x <= 0 || this.x >= canvasW - 30) {
+                this.speedX = -this.speedX;
+            } else if (this.y <= 0 || this.y >= canvasH - 30) {
+                this.speedY = -this.speedY;
+            };
+            this.init();
+    };
+
+    var counter = 0;
+    function star(){
+      //开启定时器
+      timer = setInterval(function(){      
+        counter++;
+        ctx.clearRect(0,0,canvasH,canvasW);
+        if(counter%50==0){
+           var b = new Ball(ctx);
+           ball.push(b);
+        } 
+        for (let i = 0; i < ball.length; i++) {
+            ball[i].move();
+        }
+       //当小球的数量大于一定值后，就开始删
+       if(ball.length>5){
+           ball.shift();
+       }
+      },20);
+   }
+   star();
+</script>
+
+</html>
